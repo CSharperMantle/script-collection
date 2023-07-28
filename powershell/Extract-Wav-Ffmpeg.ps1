@@ -17,8 +17,6 @@
 
 .PARAMETER Path
     Working path to find video files in.
-.PARAMETER WhatIf
-    Show operations without actually running.
 #>
 
 <#
@@ -43,6 +41,7 @@
  # SOFTWARE.
  #>
 
+[CmdletBinding(SupportsShouldProcess)]
 param (
     [Parameter(Mandatory = $true,
         Position = 0,
@@ -51,12 +50,7 @@ param (
     [Alias("PSPath")]
     [ValidateNotNullOrEmpty()]
     [string]
-    $Path,
-
-    [Parameter(Position = 1)]
-    [Alias("WI")]
-    [switch]
-    $WhatIf
+    $Path
 )
 
 $files = Get-ChildItem -Path $Path -File
@@ -66,7 +60,7 @@ $i = 0
 foreach ($f in $files) {
     $out_path = "$Path\$($f.BaseName).wav"
 
-    if ($WhatIf) {
+    if (-not ($PSCmdlet.ShouldProcess($f.FullName))) {
         Write-Output "ffmpeg.exe -i $($f.FullName) -vn $out_path -loglevel quiet"
     }
     else {

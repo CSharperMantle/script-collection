@@ -19,8 +19,6 @@
     Working path.
 .PARAMETER To
     Path to place output files.
-.PARAMETER WhatIf
-    Show operations without actually running.
 #>
 
 <#

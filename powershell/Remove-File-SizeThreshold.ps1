@@ -18,8 +18,6 @@
     Working path.
 .PARAMETER SizeThresholdKB
     Threshold of file size in KB (1024 bytes).
-.PARAMETER WhatIf
-    Show operations without actually running.
 #>
 
 <#
@@ -44,6 +42,7 @@
  # SOFTWARE.
  #>
 
+[CmdletBinding(SupportsShouldProcess)]
 param (
     [Parameter(Mandatory = $true,
         Position = 0,
@@ -57,12 +56,7 @@ param (
     [Parameter(Mandatory = $true, Position = 1)]
     [Alias("ST")]
     [uint]
-    $SizeThresholdKB,
-
-    [Parameter(Position = 2)]
-    [Alias("WI")]
-    [switch]
-    $WhatIf
+    $SizeThresholdKB
 )
 
 $files = Get-ChildItem -Path $Path -File
@@ -75,12 +69,8 @@ foreach ($f in $files) {
         Write-Verbose "$($f.FullName): $sizeKB >= $SizeThresholdKB, skipping"
         continue
     }
-    if ($WhatIf) {
-        Write-Output "Remove-Item -Path $($f.FullName)"
-    }
-    else {
-        Remove-Item -Path $($f.FullName)
-    }
+    
+    Remove-Item -Path $($f.FullName) -WhatIf:$WhatIfPreference -Confirm:$ConfirmPreference
 
     $i += 1
     Write-Progress -Activity "Running" -Status "$i in $files_count" -PercentComplete $($i / $files_count * 100)

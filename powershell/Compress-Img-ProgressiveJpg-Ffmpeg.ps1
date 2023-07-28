@@ -20,8 +20,6 @@
     Working path to find video files in.
 .PARAMETER OutputPath
     Path to place output files.
-.PARAMETER WhatIf
-    Show operations without actually running.
 #>
 
 <#
@@ -46,6 +44,7 @@
  # SOFTWARE.
  #>
 
+[CmdletBinding(SupportsShouldProcess)]
 param (
     [Parameter(Mandatory = $true,
         Position = 0,
@@ -61,12 +60,7 @@ param (
     [Alias("OP")]
     [ValidateNotNullOrEmpty()]
     [string]
-    $OutputPath,
-
-    [Parameter(Position = 2)]
-    [Alias("WI")]
-    [switch]
-    $WhatIf
+    $OutputPath
 )
 
 $files = Get-ChildItem -Path $Path -File
@@ -74,19 +68,14 @@ $files_count = $files | Measure-Object | ForEach-Object { $_.Count }
 $i = 0
 
 if (-not (Test-Path -Path $OutputPath)) {
-    if ($WhatIf) {
-        Write-Output "New-Item -Path $OutputPath -ItemType Directory | Out-Null"
-    }
-    else {
-        Write-Verbose "$OutputPath does not exist. Creating one..."
-        New-Item -Path $OutputPath -ItemType Directory | Out-Null
-    }
+    Write-Verbose "$OutputPath does not exist. Creating one..."
+    New-Item -Path $OutputPath -ItemType Directory -WhatIf:$WhatIfPreference -Confirm:$ConfirmPreference | Out-Null
 }
 
 foreach ($f in $files) {
     $out_path = "$OutputPath\$($f.BaseName)_%d.jpg"
 
-    if ($WhatIf) {
+    if (-not ($PSCmdlet.ShouldProcess($f.FullName))) {
         Write-Output "ffmpeg.exe -i $($f.FullName) -field_order progressive $out_path -loglevel quiet"
     }
     else {
