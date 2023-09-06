@@ -80,5 +80,5 @@ foreach ($k in $file_max_version.Keys) {
     $orig_name = "$k.$($file_max_version[$k])"
     $new_name = $k
 
-    Move-Item -Path $orig_name -Destination $new_name -WhatIf:$WhatIfPreference -Confirm:$ConfirmPreference
+    Move-Item -Path $orig_name -Destination $new_name -Force -WhatIf:$WhatIfPreference -Confirm:$ConfirmPreference
 }
