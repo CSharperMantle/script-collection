@@ -11,7 +11,7 @@
     This script ignores hidden files.
 
     This script is licensed under an MIT license.
-    Copyright (c) 2023-present Rong Bao <baorong2005@126.com>
+    Copyright (c) 2023 Rong Bao <baorong2005@126.com>
 
 .PARAMETER Path
     Working path.
