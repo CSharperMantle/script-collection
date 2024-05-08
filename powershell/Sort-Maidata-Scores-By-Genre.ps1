@@ -55,21 +55,21 @@ $dirs = Get-ChildItem -Path $Path -Directory -Filter "music*"
 $dirs_count = $dirs | Measure-Object | ForEach-Object { $_.Count }
 $i = 0
 
-foreach ($d in dirs) {
+foreach ($d in $dirs) {
     $metadata_path = Join-Path -Path $d.FullName -ChildPath "maidata.txt"
     $genre = Select-String -Path $metadata_path -Pattern "^&genre=(.+)$" | ForEach-Object { $_.Matches.Groups[1].Value }
 
     if ($genre) {
         $dest = Join-Path -Path $Path -ChildPath $genre
         if (-not (Test-Path -Path $dest)) {
-            New-Item -ItemType Directory -Path $dest -WhatIf:$WhatIfPreference -Confirm:$ConfirmPreference | Out-Null
+            New-Item -ItemType Directory -Path $dest -WhatIf:$WhatIfPreference | Out-Null
         }
-        Move-Item -Path $d -Destination $dest -WhatIf:$WhatIfPreference -Confirm:$ConfirmPreference
+        Move-Item -Path $d -Destination $dest -WhatIf:$WhatIfPreference
     }
     else {
         Write-Warning "No genre found in $metadata_path; ignoring"
     }
 
     $i += 1
-    Write-Progress -Activity "Running" -Status "$i in $dirs_count" -PercentComplete $($i / $files_count * 100)
+    Write-Progress -Activity "Running" -Status "$i in $dirs_count" -PercentComplete $($i / $dirs_count * 100)
 }
